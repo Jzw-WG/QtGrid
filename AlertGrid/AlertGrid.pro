@@ -1,4 +1,4 @@
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,11 +16,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    combobox_delegate.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    readonly_delegate.cpp \
+    table_model.cpp
 
 HEADERS += \
-    mainwindow.h
+    combobox_delegate.h \
+    frc_const.h \
+    mainwindow.h \
+    readonly_delegate.h \
+    table_model.h
 
 FORMS += \
     mainwindow.ui
