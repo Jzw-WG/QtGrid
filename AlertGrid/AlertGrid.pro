@@ -16,14 +16,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    button_delegate.cpp \
+    checkbox_headerview.cpp \
     combobox_delegate.cpp \
+    data_test.cpp \
     main.cpp \
     mainwindow.cpp \
     readonly_delegate.cpp \
     table_model.cpp
 
 HEADERS += \
+    Area.h \
+    Target.h \
+    button_delegate.h \
+    checkbox_headerview.h \
     combobox_delegate.h \
+    data_test.h \
     frc_const.h \
     mainwindow.h \
     readonly_delegate.h \

@@ -4,6 +4,7 @@
 #include<QMainWindow>
 #include<QTableView>
 #include<table_model.h>
+#include<data_test.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -14,14 +15,22 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    DataTest *d;
+    int currentRow_Alert;
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void initialTables();
-    void addTarget();
+    void addTarget_Test();
+    void updateData_Test();
     void clearAllAreasInput();
     void removeAllAlertAreas();
     void removeAllIgnoreAreas();
+    void removeAlertAreaAt(int index);
+    void removeIgnoreAreaAt(int index);
     bool isDirectionEmpty();
+    void addAlertArea();
+    void addIgnoreArea();
+    void adjustAreaHeaderNum();
 private slots:
     void on_btn_addAlertArea_clicked();
 
@@ -31,14 +40,27 @@ private slots:
 
     void on_btn_cancelIgnoreAreas_clicked();
 
+    void receiveTestData(int data);
+    void receiveTestData(Area area);
+    void receiveTestData(Target* targetList);
+    void receiveTestData(Target target);
+
+    void slot_clickRightMenu(QPoint pos);               //菜单 点击   获取当前位置
+    void slot_menuChoiceAction(QAction *act);           //得知菜单当前的位置
+
 private:
-    Ui::MainWindow *ui;
-    AreasTableModel *alertAreasModel;
-    AreasTableModel *ignoreAreasModel;
-    QStandardItemModel *infraredTargetModel;
-    QStandardItemModel *radarTargetModel;
+    Ui::MainWindow *ui;   
+    QMenu *rightClickMenu;
+    QAction *deleteAction;
+    TableModel *alertAreasModel;
+    TableModel *ignoreAreasModel;
+    TableModel *infraredTargetModel;
+    TableModel *radarTargetModel;
+    bool static isDirectionValid(double startDirection, double endDirection);
+    bool static isRadiusValid(double startRadius, double endRadius);
     void static initialDelegate(QTableView *tableView);
     void static initialHeaders(QStandardItemModel *model, QTableView *tableView);
+    void initialPopMenu();
     void initialEditorValidators();
 };
 #endif // MAINWINDOW_H
