@@ -5,6 +5,8 @@
 #include<Area.h>
 #include<Target.h>
 
+Q_DECLARE_METATYPE(QVector<Target>);
+
 class DataTest: public QThread
 {
     Q_OBJECT
@@ -13,23 +15,28 @@ signals:
     void sendData(Area data);
     void sendData(Target data);
     void sendData(Target* data);
-//    void sendData(QVector<Target> data);
+    void sendData(QVector<Target> data);
 public:
     int currentNum;
     Target *target;
     Area *area;
 
-//    QVector<Target> vlist;
-    Target *infraredTargetList;
-    Target *radarTargetList;
-    Target *linkedTargetList;
+    QVector<Target> infraredTargetList;
+    QVector<Target> radarTargetList;
+    QVector<Target> linkedTargetList;
     QVector<Area> alertAreaList;
     QVector<Area> ignoreAreaList;
     void sendSignal();
     DataTest();
     ~DataTest();
     void run();
-
+private:
+    QTimer *timer;
+    void observer();
+    Target updateTarget(QVector<Target> list, Target targetInfo);
+    Target createTarget(Target targetInfo);
+private slots:
+    void clearTimeoutTargets();
 };
 
 #endif // DATA_TEST_H

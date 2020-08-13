@@ -1,6 +1,5 @@
 #ifndef TARGET_H
 #define TARGET_H
-#include<string>
 #include<QMetaType>
 
 class Target

@@ -1,5 +1,5 @@
 #include "button_delegate.h"
-#include<qapplication.h>
+#include<QApplication>
 #include<QPainter>
 #include<QMouseEvent>
 ButtonDelegate::ButtonDelegate()
@@ -12,12 +12,12 @@ void ButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
     QPair<QStyleOptionButton*, QStyleOptionButton*>* buttons = m_btns.value(index);
     if (!buttons) {
         QStyleOptionButton* button1 = new QStyleOptionButton();
-        //button1->rect = option.rect.adjusted(4, 4, -(option.rect.width() / 2 + 4) , -4); //
+        button1->rect = option.rect.adjusted(4, 4, -(option.rect.width() + 4) , -4); //
         button1->text = "X";
         button1->state |= QStyle::State_Enabled;
 
         QStyleOptionButton* button2 = new QStyleOptionButton();
-        //button2->rect = option.rect.adjusted(button1->rect.width() + 4, 4, -4, -4);
+        button2->rect = option.rect.adjusted(button1->rect.width() + 4, 4, -4, -4);
         button2->text = "Y";
         button2->state |= QStyle::State_Enabled;
         buttons =new  QPair<QStyleOptionButton*, QStyleOptionButton*>(button1, button2);

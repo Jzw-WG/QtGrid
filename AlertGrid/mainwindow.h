@@ -22,6 +22,7 @@ public:
     void initialTables();
     void addTarget_Test();
     void updateData_Test();
+
     void clearAllAreasInput();
     void removeAllAlertAreas();
     void removeAllIgnoreAreas();
@@ -31,6 +32,12 @@ public:
     void addAlertArea();
     void addIgnoreArea();
     void adjustAreaHeaderNum();
+
+    void setTargetValue(QString name, int index, int value);
+    QVariant getTargetValue(QString name, int index);
+    void gerRadarIndex(int targetIndex);
+    void selectAllTargets();
+    void checkTableModifiable();
 private slots:
     void on_btn_addAlertArea_clicked();
 
@@ -42,8 +49,9 @@ private slots:
 
     void receiveTestData(int data);
     void receiveTestData(Area area);
-    void receiveTestData(Target* targetList);
+//    void receiveTestData(Target* targetList);
     void receiveTestData(Target target);
+    void receiveTestData(QVector<Target> targetList);
 
     void slot_clickRightMenu(QPoint pos);               //菜单 点击   获取当前位置
     void slot_menuChoiceAction(QAction *act);           //得知菜单当前的位置
@@ -56,10 +64,12 @@ private:
     TableModel *ignoreAreasModel;
     TableModel *infraredTargetModel;
     TableModel *radarTargetModel;
+    QVector<Target> lineList;
     bool static isDirectionValid(double startDirection, double endDirection);
     bool static isRadiusValid(double startRadius, double endRadius);
-    void static initialDelegate(QTableView *tableView);
-    void static initialHeaders(QStandardItemModel *model, QTableView *tableView);
+    void initialDelegate(QTableView *tableView);
+    void initialSize(QStandardItemModel *model, QTableView *tableView);
+    void initialHeaders(QStandardItemModel *model, QTableView *tableView);
     void initialPopMenu();
     void initialEditorValidators();
 };

@@ -16,29 +16,37 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ReplayFile.cpp \
     button_delegate.cpp \
+    button_delegate2.cpp \
     checkbox_headerview.cpp \
     combobox_delegate.cpp \
     data_test.cpp \
+    frc_const.cpp \
     main.cpp \
     mainwindow.cpp \
+    playerform.cpp \
     readonly_delegate.cpp \
     table_model.cpp
 
 HEADERS += \
     Area.h \
+    ReplayFile.h \
     Target.h \
     button_delegate.h \
+    button_delegate2.h \
     checkbox_headerview.h \
     combobox_delegate.h \
     data_test.h \
     frc_const.h \
     mainwindow.h \
+    playerform.h \
     readonly_delegate.h \
     table_model.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    playerform.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
