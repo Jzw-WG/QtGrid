@@ -36,6 +36,14 @@ void ButtonDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option
     QApplication::style()->drawControl(QStyle::CE_PushButton, buttons->second, painter);
 }
 
+QWidget * ButtonDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    Q_UNUSED(parent)
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+    return NULL;
+}
+
 bool ButtonDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (event->type() == QEvent::MouseButtonPress) {

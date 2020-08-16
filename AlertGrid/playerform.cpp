@@ -29,11 +29,11 @@ PlayerForm::~PlayerForm()
 
 void PlayerForm::initialTable()
 {
-    replayModel = new TableModel(this);
+    replayModel = new QStandardItemModel(this);
 
     ui->table_replay->setModel(replayModel);
     initialHeader();
-    replayModel->setColumnCount(6);
+    initialSize();
 }
 
 void PlayerForm::initialHeader()
@@ -48,10 +48,16 @@ void PlayerForm::initialHeader()
     ui->table_replay->horizontalHeader()->setStyleSheet("QHeaderView::section {""color: black;padding-left: 4px;border: 1px solid #6c6c6c;}");
 }
 
+void PlayerForm::initialSize()
+{
+    replayModel->setColumnCount(6);
+}
+
 void PlayerForm::initialDelegate()
 {
     ReadonlyDelegate* readOnlyDelegate = new ReadonlyDelegate();
     ButtonDelegate2* buttonDelegate = new ButtonDelegate2();
+    buttonDelegate->buttonText = "播放";
     for (int i = 0; i < ui->table_replay->model()->columnCount(); ++i)
     {
         switch (i)

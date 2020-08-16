@@ -19,6 +19,7 @@ public:
     QVector<ReplayFile> replayFileList;
     void initialTable();
     void initialHeader();
+    void initialSize();
     void initialDelegate();
     void replayFileByName(ReplayFile replayFile);
     void selectReplayFileByName(ReplayFile replayFile);
@@ -32,7 +33,7 @@ private slots:
 
 private:
     Ui::PlayerForm *ui;
-    TableModel *replayModel;
+    QStandardItemModel *replayModel;
 };
 
 #endif // PLAYERFORM_H

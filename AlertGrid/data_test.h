@@ -35,8 +35,10 @@ private:
     void observer();
     Target updateTarget(QVector<Target> list, Target targetInfo);
     Target createTarget(Target targetInfo);
+    bool static LessLineNo(const Target &t1, const Target &t2);
 private slots:
     void clearTimeoutTargets();
+    void changeCheckState(int index, bool checked);
 };
 
 #endif // DATA_TEST_H

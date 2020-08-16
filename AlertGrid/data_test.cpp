@@ -41,9 +41,10 @@ void DataTest::sendSignal()
 
 void DataTest::run()
 {
+//    sendSignal();
     while(1)
     {
-        sendSignal();
+
         currentNum++;
         area->endPitch = area->endPitch + 0.1;
         area->startPitch = area->startPitch + 0.1;
@@ -73,7 +74,8 @@ void DataTest::run()
         {
             infraredTargetList.remove(2);
         }
-        sleep(1);
+        sendSignal();
+        sleep(5);
     }
 //    timer = new QTimer();
 //    connect(timer,SIGNAL(timeout()),this,SLOT(clearTimeoutTargets()),Qt::DirectConnection);
@@ -135,6 +137,18 @@ void DataTest::observer()
 //            }
 //        }
 //    }
+//    std::sort(radarTargetList.begin(), radarTargetList.end(), LessLineNo);
+//    if (tempInfrared.size() > 0)
+//    {
+//        infraredTargetList = tempInfrared;
+//        std::sort(infraredTargetList.begin(), infraredTargetList.end(), LessLineNo);
+//    }
+//    if (tempLinked.size() > 0)
+//    {
+//        linkedTargetList = tempLinked;
+//        std::sort(linkedTargetList.begin(), linkedTargetList.end(), LessLineNo);
+//    }
+//    resetTimer();
 }
 
 Target DataTest::updateTarget(QVector<Target> list, Target targetInfo)
@@ -213,4 +227,17 @@ Target DataTest::createTarget(Target targetInfo)
 void DataTest::clearTimeoutTargets()
 {
 
+}
+
+void DataTest::changeCheckState(int index, bool checked)
+{
+    if (index < infraredTargetList.size())
+    {
+        infraredTargetList[index].checked = checked;
+    }
+}
+
+bool DataTest::LessLineNo(const Target &t1, const Target &t2)
+{
+    return t1.lineNo < t2.lineNo;
 }

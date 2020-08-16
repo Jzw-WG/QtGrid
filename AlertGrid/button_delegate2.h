@@ -6,8 +6,10 @@ class ButtonDelegate2:public QItemDelegate
 {
     Q_OBJECT
 public:
+    QString buttonText = "X";
     ButtonDelegate2();
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 private:
     QMap<QModelIndex, QStyleOptionButton*> m_btns;

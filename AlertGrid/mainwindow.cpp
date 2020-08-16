@@ -9,6 +9,10 @@
 #define PLATFORMTYPEDELEGATE_COL 4
 #define CONFIRM_COL 5
 
+#define OPERATE_COL 4
+
+#define LIST_SIZE 10
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include<QStandardItemModel>
@@ -23,6 +27,7 @@
 #include<Area.h>
 #include<Target.h>
 #include<checkbox_headerview.h>
+#include<button_delegate2.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -41,10 +46,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::initialTables()
 {
-    alertAreasModel = new TableModel(this);
-    ignoreAreasModel = new TableModel(this);
+    alertAreasModel = new QStandardItemModel(this);
+    ignoreAreasModel = new QStandardItemModel(this);
     infraredTargetModel = new TableModel(this);
-    radarTargetModel = new TableModel(this);
+    radarTargetModel = new QStandardItemModel(this);
 
     ui->table_alertAreas->setModel(alertAreasModel);
     initialHeaders(alertAreasModel, ui->table_alertAreas);
@@ -64,6 +69,8 @@ void MainWindow::initialTables()
     initialSize(radarTargetModel, ui->table_radarTargets);
     initialDelegate(ui->table_radarTargets);
 
+    initialDelegate(ui->table_alertAreas);
+    initialDelegate(ui->table_ignoreAreas);
     initialEditorValidators();
     initialPopMenu();
 }
@@ -83,6 +90,8 @@ void MainWindow::updateData_Test()
     connect(d,SIGNAL(sendData(Target)),this,SLOT(receiveTestData(Target)));
 //    connect(d,SIGNAL(sendData(Target*)),this,SLOT(receiveTestData(Target*)));
     connect(d,SIGNAL(sendData(QVector<Target>)),this,SLOT(receiveTestData(QVector<Target>)));
+    connect(infraredTargetModel,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(check_changed(QStandardItem*)));
+
     d->start();
 }
 
@@ -163,16 +172,29 @@ void MainWindow::initialDelegate(QTableView *tableView)
     else if (!QString::compare(tableView->objectName(),"table_radarTargets"))
     {
         ReadonlyDelegate* readOnlyDelegate = new ReadonlyDelegate();
-        for (int i = 0; i < tableView->model()->rowCount(); ++i)
+        for (int i = 0; i < tableView->model()->columnCount(); ++i)
         {
             tableView->setItemDelegateForColumn(i, readOnlyDelegate);
         }
-    } else if (!QString::compare(tableView->objectName(),"table_alertAreas"))
+    } else if (!QString::compare(tableView->objectName(),"table_alertAreas") || !QString::compare(tableView->objectName(),"table_ignoreAreas"))
     {
+        ReadonlyDelegate* readOnlyDelegate = new ReadonlyDelegate();
+        ButtonDelegate2* buttonDelegate = new ButtonDelegate2();
+        buttonDelegate->buttonText = "删除";
+        for (int i = 0; i < tableView->model()->columnCount(); ++i)
+        {
+            switch (i)
+            {
+            case OPERATE_COL:
+                tableView->setItemDelegateForColumn(i, buttonDelegate);
+                break;
+            default:
+                tableView->setItemDelegateForColumn(i, readOnlyDelegate);
+                break;
+            }
+        }
 
-    } else if (!QString::compare(tableView->objectName(),"table_ignoreAreas"))
-    {
-
+        connect(buttonDelegate,SIGNAL(clicked(QModelIndex)),this,SLOT(receive_deleteClicked(QModelIndex)));
     }
 }
 
@@ -231,6 +253,8 @@ void MainWindow::addAlertArea()
     // 操作 列
     alertAreasModel->setVerticalHeaderItem(alertAreasModel->rowCount() - 1, new QStandardItem(FRCConst::AlertHead+QString::number(alertAreasModel->rowCount())));
     adjustAreaHeaderNum();
+
+    QVariant a = infraredTargetModel->data(infraredTargetModel->index(3,5,QModelIndex()),Qt::CheckStateRole);
 }
 
 void MainWindow::addIgnoreArea()
@@ -328,6 +352,62 @@ bool MainWindow::isRadiusValid(double startRadius, double endRadius)
         return false;
     }
     return true;
+}
+
+void MainWindow::onInit()
+{
+    // dataHandler
+    // radarDataHandler
+    // uploadPolicyHandler
+    initialLineList();
+    for (int i = 0; i < LIST_SIZE; ++i) {
+        radarTargetList.push_back(*new Target());
+        radarTargetList[i].lineNo = -1;
+    }
+//    upLoadFlag = UPLOAD_POLICY == "auto"?false:true;
+}
+
+void MainWindow::initialLineList()
+{
+    for (int i = 0; i < lineList.size(); ++i) {
+        lineList.push_back(*new Target());
+        lineList[i].lineNo = -1;
+    }
+}
+
+void MainWindow::dataHandler()
+{
+    initialLineList();
+    for (int i = 0; i < d->infraredTargetList.size(); ++i) {
+        if (d->infraredTargetList[i].lineNo > LIST_SIZE) break;
+        lineList[d->infraredTargetList[i].lineNo] = d->infraredTargetList[i];
+        if (!upLoadFlag)
+        {
+            d->infraredTargetList[i].checked = false;
+        }
+    }
+}
+
+void MainWindow::radarDataHandler()
+{
+    radarTargetList = d->radarTargetList;
+    int count = radarTargetList.size();
+    if (count < LIST_SIZE)
+    {
+        for (int i = 0; i < LIST_SIZE - count; ++i) {
+            radarResList.push_back(*new Target());
+        }
+        isNeedBlank = true;
+    }
+    else
+    {
+        isNeedBlank = false;
+    }
+}
+
+void MainWindow::uploadPolicyHandler()
+{
+//    upLoadFlag = UPLOAD_POLICY == "auto"?false:true;
 }
 
 void MainWindow::setTargetValue(QString name, int index, int value)
@@ -516,8 +596,8 @@ void MainWindow::receiveTestData(Area area)
 void MainWindow::receiveTestData(QVector<Target> targetList)
 {
     //先空表格再刷新数据
-    infraredTargetModel->removeRows(0, infraredTargetModel->rowCount());
-    initialSize(infraredTargetModel, ui->table_infraredTargets);
+//    infraredTargetModel->removeRows(0, infraredTargetModel->rowCount());
+//    initialSize(infraredTargetModel, ui->table_infraredTargets);
     for (int i = 0; i < targetList.size(); ++i) {
         QModelIndex index = infraredTargetModel->index(targetList[i].lineNo,BATCHNO_COL,QModelIndex());
         infraredTargetModel->setData(index,QString("%1").arg(targetList[i].batchNo,4,10,QLatin1Char('0')));
@@ -530,7 +610,6 @@ void MainWindow::receiveTestData(QVector<Target> targetList)
         index = infraredTargetModel->index(targetList[i].lineNo,PLATFORMTYPEDELEGATE_COL,QModelIndex());
         infraredTargetModel->setData(index,targetList[i].platform);
         index = infraredTargetModel->index(targetList[i].lineNo,CONFIRM_COL,QModelIndex());
-        targetList[i].checked = infraredTargetModel->data(index, Qt::CheckStateRole) == Qt::CheckState::Checked?true:false;
         infraredTargetModel->setData(index,targetList[i].checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
         //上色
         for (int j = 0; j < infraredTargetModel->rowCount(); ++j) {
@@ -555,6 +634,38 @@ void MainWindow::receiveTestData(Target target)
     infraredTargetModel->setData(index,target.platform);
     index = infraredTargetModel->index(target.lineNo,CONFIRM_COL,QModelIndex());
     infraredTargetModel->setData(index,target.checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
+}
+
+void MainWindow::receive_deleteClicked(QModelIndex index)
+{
+    //弹出提示框，看是否删除数据
+    QMessageBox message(QMessageBox::NoIcon, "提示","是否删除本行数据?",QMessageBox::Yes | QMessageBox::No, NULL);
+
+    //如确认删除
+    if(message.exec() == QMessageBox::Yes)
+    {
+        if (ui->targetAlertTabWidget->currentIndex() == TAB_ALERTAREA) {
+            removeAlertAreaAt(index.row());
+        }
+        else if (ui->targetAlertTabWidget->currentIndex() == TAB_IGNOREAREA)
+        {
+            removeIgnoreAreaAt(index.row());
+        }
+    }
+}
+
+void MainWindow::check_changed(QStandardItem *item)
+{
+    if (item->index().column() == CONFIRM_COL)
+    {
+        for (int i = 0; i < d->infraredTargetList.size(); ++i) {
+            if (d->infraredTargetList[i].lineNo == item->index().row()){
+                QVariant a = item->data(Qt::CheckStateRole);
+                bool b = a==Qt::CheckState::Checked?true:false;
+                d->infraredTargetList[i].checked = b;
+            }
+        }
+    }
 }
 
 void MainWindow::slot_clickRightMenu(QPoint pos)

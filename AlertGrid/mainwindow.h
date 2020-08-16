@@ -33,6 +33,9 @@ public:
     void addIgnoreArea();
     void adjustAreaHeaderNum();
 
+    void onInit();
+    void initialLineList();
+
     void setTargetValue(QString name, int index, int value);
     QVariant getTargetValue(QString name, int index);
     void gerRadarIndex(int targetIndex);
@@ -53,6 +56,8 @@ private slots:
     void receiveTestData(Target target);
     void receiveTestData(QVector<Target> targetList);
 
+    void receive_deleteClicked(QModelIndex index);
+    void check_changed(QStandardItem *item);
     void slot_clickRightMenu(QPoint pos);               //菜单 点击   获取当前位置
     void slot_menuChoiceAction(QAction *act);           //得知菜单当前的位置
 
@@ -60,11 +65,16 @@ private:
     Ui::MainWindow *ui;   
     QMenu *rightClickMenu;
     QAction *deleteAction;
-    TableModel *alertAreasModel;
-    TableModel *ignoreAreasModel;
-    TableModel *infraredTargetModel;
-    TableModel *radarTargetModel;
+    QStandardItemModel *alertAreasModel;
+    QStandardItemModel *ignoreAreasModel;
+    QStandardItemModel *infraredTargetModel;
+    QStandardItemModel *radarTargetModel;
     QVector<Target> lineList;
+    QVector<Target> radarIndexList;
+    QVector<Target> radarTargetList;
+    QVector<Target> radarResList;
+    bool upLoadFlag = false;// 上报模式：true为手动 false为自动
+    bool isNeedBlank = true;
     bool static isDirectionValid(double startDirection, double endDirection);
     bool static isRadiusValid(double startRadius, double endRadius);
     void initialDelegate(QTableView *tableView);
@@ -72,5 +82,9 @@ private:
     void initialHeaders(QStandardItemModel *model, QTableView *tableView);
     void initialPopMenu();
     void initialEditorValidators();
+
+    void dataHandler();
+    void radarDataHandler();
+    void uploadPolicyHandler();
 };
 #endif // MAINWINDOW_H
