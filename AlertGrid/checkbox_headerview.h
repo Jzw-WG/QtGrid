@@ -12,7 +12,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     bool event(QEvent *event);
 signals:
-    void stateChanged(Qt::CheckState state);
+    void stateChanged(bool state);
 private slots:
     void onStateChanged(int state);
 private:

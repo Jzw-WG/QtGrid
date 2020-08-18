@@ -24,7 +24,13 @@ Qt::ItemFlags TableModel::flags(const QModelIndex &index) const
 
     Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     if (index.column() == CHECK_BOX_COLUMN)
+    {
+        if (!isEnable)
+            flags &= ~Qt::ItemIsEnabled;
+        if (!isSelectable)
+            flags &= ~Qt::ItemIsSelectable;
         flags |= Qt::ItemIsUserCheckable;
+    }
     else if (index.column() == COMBO_BOX_COLUMN1 || index.column() == COMBO_BOX_COLUMN2)
         flags |= Qt::ItemIsEditable;
 

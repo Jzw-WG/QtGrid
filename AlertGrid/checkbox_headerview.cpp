@@ -21,15 +21,15 @@ CheckboxHeaderView::CheckboxHeaderView(Qt::Orientation orientation, QWidget *par
 // 槽函数，用于更新复选框状态
 void CheckboxHeaderView::onStateChanged(int state)
 {
-    if (state == Qt::PartiallyChecked) {
-        m_bTristate = true;
-        m_bNoChange = true;
-    } else {
-        m_bNoChange = false;
-    }
+//    if (state == Qt::PartiallyChecked) {
+//        m_bTristate = true;
+//        m_bNoChange = true;
+//    } else {
+//        m_bNoChange = false;
+//    }
 
-    m_bChecked = (state != Qt::Unchecked);
-    update();
+//    m_bChecked = (state != Qt::Unchecked);
+//    update();
 }
 
 // 绘制复选框
@@ -100,7 +100,7 @@ void CheckboxHeaderView::mouseReleaseEvent(QMouseEvent *event)
 
         update();
 
-        Qt::CheckState state = m_bChecked ? Qt::Checked : Qt::Unchecked;
+        bool state = m_bChecked;
 
         emit stateChanged(state);
     }

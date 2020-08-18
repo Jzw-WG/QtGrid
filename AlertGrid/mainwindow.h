@@ -39,8 +39,7 @@ public:
     void setTargetValue(QString name, int index, int value);
     QVariant getTargetValue(QString name, int index);
     void gerRadarIndex(int targetIndex);
-    void selectAllTargets();
-    void checkTableModifiable();
+    void checkTableModifiable(bool state);
 private slots:
     void on_btn_addAlertArea_clicked();
 
@@ -57,6 +56,7 @@ private slots:
     void receiveTestData(QVector<Target> targetList);
 
     void receive_deleteClicked(QModelIndex index);
+    void selectAllTargets(bool state);
     void check_changed(QStandardItem *item);
     void slot_clickRightMenu(QPoint pos);               //菜单 点击   获取当前位置
     void slot_menuChoiceAction(QAction *act);           //得知菜单当前的位置
@@ -67,7 +67,7 @@ private:
     QAction *deleteAction;
     QStandardItemModel *alertAreasModel;
     QStandardItemModel *ignoreAreasModel;
-    QStandardItemModel *infraredTargetModel;
+    TableModel *infraredTargetModel;
     QStandardItemModel *radarTargetModel;
     QVector<Target> lineList;
     QVector<Target> radarIndexList;

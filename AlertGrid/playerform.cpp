@@ -79,8 +79,8 @@ void PlayerForm::addReplayList_Test()
         QList<QStandardItem *> areaParas;
         areaParas.append(new QStandardItem("target_2019-10-06-170010"));
         areaParas.append(new QStandardItem("2019-10-06"));
-        areaParas.append(new QStandardItem(".bin"));
         areaParas.append(new QStandardItem(""));
+        areaParas.append(new QStandardItem(".bin"));
         areaParas.append(new QStandardItem(QString("100") + QString(" KB")));
         replayModel->appendRow(areaParas);
         // 操作 列

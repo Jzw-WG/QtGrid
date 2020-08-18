@@ -10,6 +10,8 @@ class TableModel: public QStandardItemModel
 public:
     TableModel(QObject *parent);
     ~TableModel();
+    bool isSelectable = true;
+    bool isEnable = true;
     Qt::ItemFlags flags(const QModelIndex &index) const;
     void onStateChanged();
 //    bool setData( const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);

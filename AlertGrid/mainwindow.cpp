@@ -105,6 +105,7 @@ void MainWindow::initialHeaders(QStandardItemModel *model, QTableView *tableView
         }
         CheckboxHeaderView *headerView = new CheckboxHeaderView(Qt::Horizontal, this);
         tableView->setHorizontalHeader(headerView);
+        connect(headerView, SIGNAL(stateChanged(bool)), this, SLOT(selectAllTargets(bool)));
         tableView->verticalHeader()->hide();
     }
     else if (!QString::compare(tableView->objectName(),"table_radarTargets"))
@@ -494,15 +495,16 @@ void MainWindow::gerRadarIndex(int targetIndex)
     }
 }
 
-void MainWindow::selectAllTargets()
+void MainWindow::selectAllTargets(bool state)
 {
-//    checkTableModifiable();
+    checkTableModifiable(state);
 //    switchUploadPolicy();
 }
 
-void MainWindow::checkTableModifiable()
+void MainWindow::checkTableModifiable(bool state)
 {
-
+    infraredTargetModel->isEnable = state;
+    infraredTargetModel->isSelectable = state;
 }
 
 void MainWindow::on_btn_addAlertArea_clicked()
@@ -639,7 +641,7 @@ void MainWindow::receiveTestData(Target target)
 void MainWindow::receive_deleteClicked(QModelIndex index)
 {
     //弹出提示框，看是否删除数据
-    QMessageBox message(QMessageBox::NoIcon, "提示","是否删除本行数据?",QMessageBox::Yes | QMessageBox::No, NULL);
+    QMessageBox message(QMessageBox::NoIcon, "提示","是否删除该区域?",QMessageBox::Yes | QMessageBox::No, NULL);
 
     //如确认删除
     if(message.exec() == QMessageBox::Yes)
@@ -683,7 +685,7 @@ void MainWindow::slot_clickRightMenu(QPoint pos)
 void MainWindow::slot_menuChoiceAction(QAction *act)
 {
     //弹出提示框，看是否删除数据
-    QMessageBox message(QMessageBox::NoIcon, "提示","是否删除本行数据?",QMessageBox::Yes | QMessageBox::No, NULL);
+    QMessageBox message(QMessageBox::NoIcon, "提示","是否删除该区域?",QMessageBox::Yes | QMessageBox::No, NULL);
 
     //如确认删除
     if(message.exec() == QMessageBox::Yes)
