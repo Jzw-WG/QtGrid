@@ -34,9 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    initialTables();
-    addTarget_Test();
+    initialTables();    
     updateData_Test();
+    addTarget_Test();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +60,7 @@ void MainWindow::initialTables()
     initialSize(ignoreAreasModel, ui->table_ignoreAreas);
 
     ui->table_infraredTargets->setModel(infraredTargetModel);
+    connect(infraredTargetModel,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(check_changed(QStandardItem*)));
     initialHeaders(infraredTargetModel, ui->table_infraredTargets);
     initialSize(infraredTargetModel, ui->table_infraredTargets);
     initialDelegate(ui->table_infraredTargets);
@@ -81,6 +82,10 @@ void MainWindow::addTarget_Test()
     infraredTargetModel->setItem(1,1,new QStandardItem("zhang"));
 //    QModelIndex index2 = infraredTargetModel->index(1,CONFIRM_COL,QModelIndex());
 //    infraredTargetModel->setData(index2,Qt::CheckState::Checked,Qt::CheckStateRole);
+    initialLineList();
+    dataHandler();
+    radarDataHandler();
+
 }
 
 void MainWindow::updateData_Test()
@@ -90,8 +95,6 @@ void MainWindow::updateData_Test()
     connect(d,SIGNAL(sendData(Target)),this,SLOT(receiveTestData(Target)));
 //    connect(d,SIGNAL(sendData(Target*)),this,SLOT(receiveTestData(Target*)));
     connect(d,SIGNAL(sendData(QVector<Target>)),this,SLOT(receiveTestData(QVector<Target>)));
-    connect(infraredTargetModel,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(check_changed(QStandardItem*)));
-
     d->start();
 }
 
@@ -370,10 +373,15 @@ void MainWindow::onInit()
 
 void MainWindow::initialLineList()
 {
-    for (int i = 0; i < lineList.size(); ++i) {
-        lineList.push_back(*new Target());
-        lineList[i].lineNo = -1;
-    }
+    if (lineList.size() == 0)
+        for (int i = 0; i < LIST_SIZE; ++i) {
+            lineList.push_back(*new Target());
+            lineList[i].lineNo = -1;
+        }
+    else
+        for (int i = 0; i < lineList.size(); ++i) {
+            lineList[i].lineNo = -1;
+        }
 }
 
 void MainWindow::dataHandler()
@@ -411,6 +419,7 @@ void MainWindow::uploadPolicyHandler()
 //    upLoadFlag = UPLOAD_POLICY == "auto"?false:true;
 }
 
+//无用
 void MainWindow::setTargetValue(QString name, int index, int value)
 {
     int targetIndex;
@@ -446,6 +455,7 @@ void MainWindow::setTargetValue(QString name, int index, int value)
     }
 }
 
+//无用
 QVariant MainWindow::getTargetValue(QString name, int index)
 {
     int temp;
@@ -480,7 +490,7 @@ QVariant MainWindow::getTargetValue(QString name, int index)
     return result;
 }
 
-void MainWindow::gerRadarIndex(int targetIndex)
+void MainWindow::getRadarIndex(int targetIndex)
 {
     QVector<int> radarIndexList;
     for (int i = 0; i < radarIndexList.size(); ++i) {
@@ -509,7 +519,6 @@ void MainWindow::checkTableModifiable(bool state)
 
 void MainWindow::on_btn_addAlertArea_clicked()
 {
-//    addAlertArea();//test
     if (!isDirectionValid(ui->lineEdit->text().toDouble(), ui->lineEdit_2->text().toDouble()) || !isRadiusValid(ui->lineEdit_3->text().toDouble(), ui->lineEdit_4->text().toDouble()))
     {
         QMessageBox messageBox(QMessageBox::Information,"输入错误","请修改方位角为" + QString::number(FRCConst::MinDirection) + "~" + QString::number(FRCConst::MaxDirection) +
@@ -537,7 +546,6 @@ void MainWindow::on_btn_addAlertArea_clicked()
 
 void MainWindow::on_btn_addIgnoreArea_clicked()
 {
-//    addIgnoreArea();//test
         if (!isDirectionValid(ui->lineEdit_5->text().toDouble(), ui->lineEdit_6->text().toDouble()) || !isRadiusValid(ui->lineEdit_7->text().toDouble(), ui->lineEdit_8->text().toDouble()))
         {
             QMessageBox messageBox(QMessageBox::Information,"输入错误","请修改方位角为" + QString::number(FRCConst::MinDirection) + "~" + QString::number(FRCConst::MaxDirection) +
@@ -614,7 +622,7 @@ void MainWindow::receiveTestData(QVector<Target> targetList)
         index = infraredTargetModel->index(targetList[i].lineNo,CONFIRM_COL,QModelIndex());
         infraredTargetModel->setData(index,targetList[i].checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
         //上色
-        for (int j = 0; j < infraredTargetModel->rowCount(); ++j) {
+        for (int j = 0; j < infraredTargetModel->columnCount(); ++j) {
             index = infraredTargetModel->index(targetList[i].lineNo,j,QModelIndex());
             infraredTargetModel->setData(index,FRCConst::ColorForThreatLevel2[targetList[i].threatLevel], Qt::BackgroundColorRole);
         }

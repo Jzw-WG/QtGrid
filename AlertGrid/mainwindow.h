@@ -38,7 +38,7 @@ public:
 
     void setTargetValue(QString name, int index, int value);
     QVariant getTargetValue(QString name, int index);
-    void gerRadarIndex(int targetIndex);
+    void getRadarIndex(int targetIndex);
     void checkTableModifiable(bool state);
 private slots:
     void on_btn_addAlertArea_clicked();

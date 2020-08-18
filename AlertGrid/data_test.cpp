@@ -25,6 +25,17 @@ DataTest::DataTest()
         infraredTarget->lineNo = i;
         infraredTargetList.push_back(*infraredTarget);
     }
+
+    for (int i = 2; i < 6; ++i)
+    {
+        Target *radarTarget = new Target();
+        radarTarget->direction = 20;
+        radarTarget->pitch = 10;
+        radarTarget->lineNo = i;
+        radarTarget->distance = 10;
+        radarTarget->batchNo = i;
+        radarTargetList.push_back(*radarTarget);
+    }
 }
 
 DataTest::~DataTest()
