@@ -64,7 +64,7 @@ void CheckboxHeaderView::paintSection(QPainter *painter, const QRect &rect, int 
         int leftPos = this->sectionViewportPosition(0);
         checkBox.setGeometry(leftPos,0,20,this->height());
         option.iconSize = QSize(20, 20);
-        option.rect = QRect(rect.left() - 40,rect.top(),rect.width(),rect.height());
+        option.rect = QRect(rect.left() + 4,rect.top() + 7,16,16); //windows differ from linux
         style()->drawPrimitive(QStyle::PE_IndicatorCheckBox, &option, painter, &checkBox);
 //        style()->drawItemPixmap(painter, rect, Qt::AlignCenter, QPixmap(":/images/checkBoxChecked"));
 //        style()->drawControl(QStyle::CE_CheckBox, &option, painter, this);
