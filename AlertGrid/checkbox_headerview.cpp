@@ -30,6 +30,7 @@ void CheckboxHeaderView::onStateChanged(int state)
 
 //    m_bChecked = (state != Qt::Unchecked);
 //    update();
+
 }
 
 // 绘制复选框
@@ -44,19 +45,20 @@ void CheckboxHeaderView::paintSection(QPainter *painter, const QRect &rect, int 
         QStyleOptionButton option;
         option.initFrom(this);
 
-        if (m_bChecked)
-            option.state |= QStyle::State_Sunken;
+//        if (m_bChecked)
+//            option.state |= QStyle::State_Sunken;
 
-        if (m_bTristate && m_bNoChange)
-            option.state |= QStyle::State_NoChange;
-        else
+//        if (m_bTristate && m_bNoChange)
+//            option.state |= QStyle::State_NoChange;
+//        else
             option.state |= m_bChecked ? QStyle::State_On : QStyle::State_Off;
-        if (testAttribute(Qt::WA_Hover) && underMouse()) {
-            if (m_bMoving)
-                option.state |= QStyle::State_MouseOver;
-            else
-                option.state &= ~QStyle::State_MouseOver;
-        }
+//        if (testAttribute(Qt::WA_Hover) && underMouse()) {
+//            if (m_bMoving)
+//                option.state |= QStyle::State_MouseOver;
+//            else
+//                option.state &= ~QStyle::State_MouseOver;
+//        }
+
 
         QCheckBox checkBox;
         int leftPos = this->sectionViewportPosition(0);
@@ -88,12 +90,15 @@ void CheckboxHeaderView::mouseReleaseEvent(QMouseEvent *event)
 {
     if (m_bPressed)
     {
-        if (m_bTristate && m_bNoChange)
-        {
-            m_bChecked = true;
-            m_bNoChange = false;
-        }
-        else
+//        if (m_bTristate && m_bNoChange)
+//        {
+//            m_bChecked = true;
+//            m_bNoChange = false;
+//        }
+//        else
+        int nColumn = logicalIndexAt(event->pos());
+
+        if (nColumn == CHECK_BOX_COLUMN)
         {
             m_bChecked = !m_bChecked;
         }
@@ -113,20 +118,20 @@ void CheckboxHeaderView::mouseReleaseEvent(QMouseEvent *event)
 }
 
 // 鼠标滑过、离开，更新复选框状态
-bool CheckboxHeaderView::event(QEvent *event)
-{
-    if (event->type() == QEvent::Enter || event->type() == QEvent::Leave)
-    {
-        QMouseEvent *pEvent = static_cast<QMouseEvent *>(event);
-        int nColumn = logicalIndexAt(pEvent->x());
-        if (nColumn == CHECK_BOX_COLUMN)
-        {
-            m_bMoving = (event->type() == QEvent::Enter);
+//bool CheckboxHeaderView::event(QEvent *event)
+//{
+//    if (event->type() == QEvent::Enter || event->type() == QEvent::Leave)
+//    {
+//        QMouseEvent *pEvent = static_cast<QMouseEvent *>(event);
+//        int nColumn = logicalIndexAt(pEvent->x());
+//        if (nColumn == CHECK_BOX_COLUMN)
+//        {
+//            m_bMoving = (event->type() == QEvent::Enter);
 
-            update();
-            return true;
-        }
-    }
+//            update();
+//            return true;
+//        }
+//    }
 
-    return QHeaderView::event(event);
-}
+//    return QHeaderView::event(event);
+//}

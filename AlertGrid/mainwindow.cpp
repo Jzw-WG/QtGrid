@@ -5,8 +5,9 @@
 #define BATCHNO_COL 0
 #define DIRECTION_COL 1
 #define PITCH_COL 2
+#define DISTANCE_COL 3
 #define TARGETCATEGORY_COL 3
-#define PLATFORMTYPEDELEGATE_COL 4
+#define ASSOCIATEBATCHNO_COL 4
 #define CONFIRM_COL 5
 
 #define OPERATE_COL 4
@@ -34,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    initialTables();    
+    initialTables();
     updateData_Test();
     addTarget_Test();
 }
@@ -94,7 +95,7 @@ void MainWindow::updateData_Test()
     connect(d,SIGNAL(sendData(Area)),this,SLOT(receiveTestData(Area)));
     connect(d,SIGNAL(sendData(Target)),this,SLOT(receiveTestData(Target)));
 //    connect(d,SIGNAL(sendData(Target*)),this,SLOT(receiveTestData(Target*)));
-    connect(d,SIGNAL(sendData(QVector<Target>)),this,SLOT(receiveTestData(QVector<Target>)));
+    connect(d,SIGNAL(sendData(QVector<Target>, QVector<Target>)),this,SLOT(receiveTestData(QVector<Target>, QVector<Target>)));
     d->start();
 }
 
@@ -138,7 +139,7 @@ void MainWindow::initialSize(QStandardItemModel *model, QTableView *tableView)
     else if (!QString::compare(tableView->objectName(),"table_radarTargets"))
     {
         model->setColumnCount(4);
-        model->setRowCount(10);
+//        model->setRowCount(10);
     } else if (!QString::compare(tableView->objectName(),"table_alertAreas") || !QString::compare(tableView->objectName(),"table_ignoreAreas"))
     {
         model->setColumnCount(5);
@@ -163,8 +164,9 @@ void MainWindow::initialDelegate(QTableView *tableView)
             {
             case TARGETCATEGORY_COL:
                 tableView->setItemDelegateForColumn(i, targetCategoryDelegate);
+                connect(targetCategoryDelegate, SIGNAL(send(int, int, QString)), this, SLOT(receiveCatagroy(int, int, QString)));
                 break;
-            case PLATFORMTYPEDELEGATE_COL:
+            case ASSOCIATEBATCHNO_COL:
                 tableView->setItemDelegateForColumn(i, platFormTypeDelegate);
                 break;
             default:
@@ -389,17 +391,18 @@ void MainWindow::dataHandler()
     initialLineList();
     for (int i = 0; i < d->infraredTargetList.size(); ++i) {
         if (d->infraredTargetList[i].lineNo > LIST_SIZE) break;
-        lineList[d->infraredTargetList[i].lineNo] = d->infraredTargetList[i];
         if (!upLoadFlag)
         {
             d->infraredTargetList[i].checked = false;
         }
+        lineList[d->infraredTargetList[i].lineNo] = d->infraredTargetList[i];
+
     }
 }
 
 void MainWindow::radarDataHandler()
 {
-    radarTargetList = d->radarTargetList;
+    this->radarTargetList = d->radarTargetList;
     int count = radarTargetList.size();
     if (count < LIST_SIZE)
     {
@@ -423,12 +426,19 @@ void MainWindow::uploadPolicyHandler()
 void MainWindow::setTargetValue(QString name, int index, int value)
 {
     int targetIndex;
+    bool found = false;
     name = name + "-" + QString::number(index);
     for (int i = 0; i < d->infraredTargetList.size(); ++i) {
         if (d->infraredTargetList[i].lineNo == index)
         {
             targetIndex = i;
-        }
+            found = true;
+            break;
+        }       
+    }
+    if (!found)
+    {
+        return;
     }
     if (name == "targetCategory-" + QString::number(index))
     {
@@ -509,6 +519,9 @@ void MainWindow::selectAllTargets(bool state)
 {
     checkTableModifiable(state);
 //    switchUploadPolicy();
+    // 刷新页面checkbox视觉效果
+    ui->table_infraredTargets->selectColumn(CONFIRM_COL);
+    ui->table_infraredTargets->clearSelection();
 }
 
 void MainWindow::checkTableModifiable(bool state)
@@ -603,30 +616,92 @@ void MainWindow::receiveTestData(Area area)
     ui->lineEdit_8->setText(QString::number(area.endPitch));
 }
 
-void MainWindow::receiveTestData(QVector<Target> targetList)
+void MainWindow::receiveTestData(QVector<Target> infraredList, QVector<Target> radarList)
 {
-    //先空表格再刷新数据
-//    infraredTargetModel->removeRows(0, infraredTargetModel->rowCount());
-//    initialSize(infraredTargetModel, ui->table_infraredTargets);
-    for (int i = 0; i < targetList.size(); ++i) {
-        QModelIndex index = infraredTargetModel->index(targetList[i].lineNo,BATCHNO_COL,QModelIndex());
-        infraredTargetModel->setData(index,QString("%1").arg(targetList[i].batchNo,4,10,QLatin1Char('0')));
-        index = infraredTargetModel->index(targetList[i].lineNo,DIRECTION_COL,QModelIndex());
-        infraredTargetModel->setData(index,targetList[i].direction);
-        index = infraredTargetModel->index(targetList[i].lineNo,PITCH_COL,QModelIndex());
-        infraredTargetModel->setData(index,targetList[i].direction);
-        index = infraredTargetModel->index(targetList[i].lineNo,TARGETCATEGORY_COL,QModelIndex());
-        infraredTargetModel->setData(index,FRCConst::Categroy[targetList[i].category]);
-        index = infraredTargetModel->index(targetList[i].lineNo,PLATFORMTYPEDELEGATE_COL,QModelIndex());
-        infraredTargetModel->setData(index,targetList[i].platform);
-        index = infraredTargetModel->index(targetList[i].lineNo,CONFIRM_COL,QModelIndex());
-        infraredTargetModel->setData(index,targetList[i].checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
+    dataHandler();
+    radarDataHandler();
+    //todo infraredlist 换成 linelist
+//    for (int i = 0; i < infraredList.size(); ++i) {
+//        QModelIndex index = infraredTargetModel->index(infraredList[i].lineNo,BATCHNO_COL,QModelIndex());
+//        infraredTargetModel->setData(index,QString("%1").arg(infraredList[i].batchNo,4,10,QLatin1Char('0')));
+//        index = infraredTargetModel->index(infraredList[i].lineNo,DIRECTION_COL,QModelIndex());
+//        infraredTargetModel->setData(index,infraredList[i].direction);
+//        index = infraredTargetModel->index(infraredList[i].lineNo,PITCH_COL,QModelIndex());
+//        infraredTargetModel->setData(index,infraredList[i].direction);
+//        index = infraredTargetModel->index(infraredList[i].lineNo,TARGETCATEGORY_COL,QModelIndex());
+//        infraredTargetModel->setData(index,FRCConst::Categroy[infraredList[i].category]);
+////        infraredTargetModel->setData(index,FRCConst::Categroy[getTargetValue("targetCategory", i).value<int>()]);
+//        index = infraredTargetModel->index(infraredList[i].lineNo,ASSOCIATEBATCHNO_COL,QModelIndex());
+//        infraredTargetModel->setData(index,infraredList[i].platform);
+//        index = infraredTargetModel->index(infraredList[i].lineNo,CONFIRM_COL,QModelIndex());
+//        infraredTargetModel->setData(index,infraredList[i].checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
+//        //上色
+//        for (int j = 0; j < infraredTargetModel->columnCount(); ++j) {
+//            index = infraredTargetModel->index(infraredList[i].lineNo,j,QModelIndex());
+//            infraredTargetModel->setData(index,FRCConst::ColorForThreatLevel2[infraredList[i].threatLevel], Qt::BackgroundColorRole);
+//        }
+//    }
+
+    for (int i = 0; i < lineList.size(); ++i) {
+        showATarget(i);
+    }
+
+
+    radarTargetModel->setRowCount(radarList.size());
+    for (int i = 0; i < radarList.size(); ++i) {
+        QModelIndex index = radarTargetModel->index(i,BATCHNO_COL,QModelIndex());
+        radarTargetModel->setData(index,QString("%1").arg(infraredList[i].batchNo,4,10,QLatin1Char('0')));
+        index = radarTargetModel->index(i,DIRECTION_COL,QModelIndex());
+        radarTargetModel->setData(index,radarList[i].direction);
+        index = radarTargetModel->index(i,PITCH_COL,QModelIndex());
+        radarTargetModel->setData(index,radarList[i].pitch);
+        index = radarTargetModel->index(i,DISTANCE_COL,QModelIndex());
+        radarTargetModel->setData(index,radarList[i].distance);
+//        //上色
+//        for (int j = 0; j < radarTargetModel->columnCount(); ++j) {
+//            index = radarTargetModel->index(radarList[i].lineNo,j,QModelIndex());
+//            radarTargetModel->setData(index,FRCConst::ColorForThreatLevel2[radarList[i].threatLevel], Qt::BackgroundColorRole);
+//        }
+    }
+}
+
+void MainWindow::showATarget(int row)
+{
+    if (lineList[row].lineNo == -1)
+    {
+        QModelIndex index = infraredTargetModel->index(row,BATCHNO_COL,QModelIndex());
+        infraredTargetModel->clearItemData(index);
+        index = infraredTargetModel->index(row,DIRECTION_COL,QModelIndex());
+        infraredTargetModel->clearItemData(index);
+        index = infraredTargetModel->index(row,PITCH_COL,QModelIndex());
+        infraredTargetModel->clearItemData(index);
+        index = infraredTargetModel->index(row,TARGETCATEGORY_COL,QModelIndex());
+        infraredTargetModel->clearItemData(index);
+        index = infraredTargetModel->index(row,ASSOCIATEBATCHNO_COL,QModelIndex());
+        infraredTargetModel->clearItemData(index);
+        index = infraredTargetModel->index(row,CONFIRM_COL,QModelIndex());
+        infraredTargetModel->clearItemData(index);
+    }
+    else
+    {
+        QModelIndex index = infraredTargetModel->index(row,BATCHNO_COL,QModelIndex());
+        infraredTargetModel->setData(index,QString("%1").arg(lineList[row].batchNo,4,10,QLatin1Char('0')));
+        index = infraredTargetModel->index(row,DIRECTION_COL,QModelIndex());
+        infraredTargetModel->setData(index,lineList[row].direction);
+        index = infraredTargetModel->index(row,PITCH_COL,QModelIndex());
+        infraredTargetModel->setData(index,lineList[row].direction);
+        index = infraredTargetModel->index(row,TARGETCATEGORY_COL,QModelIndex());
+        infraredTargetModel->setData(index,FRCConst::Categroy[lineList[row].category]);
+        //        infraredTargetModel->setData(index,FRCConst::Categroy[getTargetValue("targetCategory", i).value<int>()]);
+        index = infraredTargetModel->index(row,ASSOCIATEBATCHNO_COL,QModelIndex());
+        infraredTargetModel->setData(index,lineList[row].platform);
+        index = infraredTargetModel->index(row,CONFIRM_COL,QModelIndex());
+        infraredTargetModel->setData(index,lineList[row].checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
         //上色
         for (int j = 0; j < infraredTargetModel->columnCount(); ++j) {
-            index = infraredTargetModel->index(targetList[i].lineNo,j,QModelIndex());
-            infraredTargetModel->setData(index,FRCConst::ColorForThreatLevel2[targetList[i].threatLevel], Qt::BackgroundColorRole);
+            index = infraredTargetModel->index(row,j,QModelIndex());
+            infraredTargetModel->setData(index,FRCConst::ColorForThreatLevel2[lineList[row].threatLevel], Qt::BackgroundColorRole);
         }
-
     }
 }
 
@@ -637,10 +712,10 @@ void MainWindow::receiveTestData(Target target)
     index = infraredTargetModel->index(target.lineNo,DIRECTION_COL,QModelIndex());
     infraredTargetModel->setData(index,target.direction);
     index = infraredTargetModel->index(target.lineNo,PITCH_COL,QModelIndex());
-    infraredTargetModel->setData(index,target.direction);
+    infraredTargetModel->setData(index,target.pitch);
     index = infraredTargetModel->index(target.lineNo,TARGETCATEGORY_COL,QModelIndex());
     infraredTargetModel->setData(index,FRCConst::Categroy[target.category]);
-    index = infraredTargetModel->index(target.lineNo,PLATFORMTYPEDELEGATE_COL,QModelIndex());
+    index = infraredTargetModel->index(target.lineNo,ASSOCIATEBATCHNO_COL,QModelIndex());
     infraredTargetModel->setData(index,target.platform);
     index = infraredTargetModel->index(target.lineNo,CONFIRM_COL,QModelIndex());
     infraredTargetModel->setData(index,target.checked?Qt::CheckState::Checked:Qt::CheckState::Unchecked, Qt::CheckStateRole);
@@ -664,13 +739,32 @@ void MainWindow::receive_deleteClicked(QModelIndex index)
     }
 }
 
+void MainWindow::receiveCatagroy(int col, int row, QString text)
+{
+    int category;
+    if (col == TARGETCATEGORY_COL)
+    {
+        for (int j = 0; j < (int) (sizeof (FRCConst::Categroy)/sizeof (FRCConst::Categroy[0])); ++j) {
+            if (text == FRCConst::Categroy[j]){
+                category = j;
+            }
+        }
+        setTargetValue("targetCategory", row, category);
+    }
+    else if (col == ASSOCIATEBATCHNO_COL)
+    {
+        setTargetValue("targetCategory", row, text.toInt());//todo stringtoint
+    }
+}
+
 void MainWindow::check_changed(QStandardItem *item)
 {
+    QVariant a;
     if (item->index().column() == CONFIRM_COL)
     {
         for (int i = 0; i < d->infraredTargetList.size(); ++i) {
             if (d->infraredTargetList[i].lineNo == item->index().row()){
-                QVariant a = item->data(Qt::CheckStateRole);
+                a = item->data(Qt::CheckStateRole);
                 bool b = a==Qt::CheckState::Checked?true:false;
                 d->infraredTargetList[i].checked = b;
             }

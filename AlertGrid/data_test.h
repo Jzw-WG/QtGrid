@@ -15,7 +15,7 @@ signals:
     void sendData(Area data);
     void sendData(Target data);
     void sendData(Target* data);
-    void sendData(QVector<Target> data);
+    void sendData(QVector<Target> data1, QVector<Target> data2);
 public:
     int currentNum;
     Target *target;

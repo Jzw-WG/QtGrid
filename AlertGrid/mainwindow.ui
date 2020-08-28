@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>813</width>
+    <width>818</width>
     <height>347</height>
    </rect>
   </property>
@@ -47,7 +47,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_targetList">
          <property name="enabled">
@@ -246,8 +246,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>813</width>
-     <height>23</height>
+     <width>818</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

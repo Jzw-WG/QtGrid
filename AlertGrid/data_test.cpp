@@ -47,7 +47,7 @@ void DataTest::sendSignal()
 {
     emit sendData(*area);
 //    emit sendData(*target);
-    emit sendData(infraredTargetList);
+    emit sendData(infraredTargetList, radarTargetList);
 }
 
 void DataTest::run()
