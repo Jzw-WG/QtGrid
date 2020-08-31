@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     ReplayFile.cpp \
+    alerttable.cpp \
     button_delegate.cpp \
     button_delegate2.cpp \
     checkbox_headerview.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     Area.h \
     ReplayFile.h \
     Target.h \
+    alerttable.h \
     button_delegate.h \
     button_delegate2.h \
     checkbox_headerview.h \
@@ -45,6 +47,7 @@ HEADERS += \
     table_model.h
 
 FORMS += \
+    alerttable.ui \
     mainwindow.ui \
     playerform.ui
 
