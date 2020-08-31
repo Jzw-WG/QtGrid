@@ -2,7 +2,7 @@
 #define TARGET_H
 #include<QMetaType>
 
-class Target
+class SCTarget
 {
 public:
     int direction;
@@ -31,7 +31,7 @@ public:
     int radarBatchNo;
     int radarBatchNoChangedTo;
     int timeModified;
-    Target()
+    SCTarget()
     {
         platform = 0;
         platformChangedTo = -1;
@@ -47,7 +47,7 @@ public:
         dataType = 0;
         radarBatchNoChangedTo = -1;
         timeModified = 0;
-        qRegisterMetaType<Target>("Target");
+        qRegisterMetaType<SCTarget>("Target");
     }
 };
 

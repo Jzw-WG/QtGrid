@@ -54,8 +54,8 @@ private slots:
     void receiveTestData(int data);
     void receiveTestData(Area area);
 //    void receiveTestData(Target* targetList);
-    void receiveTestData(Target target);
-    void receiveTestData(QVector<Target> infraredList, QVector<Target> radarList);
+    void receiveTestData(SCTarget target);
+    void receiveTestData(QVector<SCTarget> infraredList, QVector<SCTarget> radarList);
 
     void receive_deleteClicked(QModelIndex index);
 
@@ -73,10 +73,10 @@ private:
     QStandardItemModel *ignoreAreasModel;
     TableModel *infraredTargetModel;
     QStandardItemModel *radarTargetModel;
-    QVector<Target> lineList;
-    QVector<Target> radarIndexList;
-    QVector<Target> radarTargetList;
-    QVector<Target> radarResList;
+    QVector<SCTarget> lineList;
+    QVector<SCTarget> radarIndexList;
+    QVector<SCTarget> radarTargetList;
+    QVector<SCTarget> radarResList;
     bool upLoadFlag = false;// 上报模式：true为手动 false为自动
     bool isNeedBlank = true;
     bool static isDirectionValid(double startDirection, double endDirection);

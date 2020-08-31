@@ -5,7 +5,7 @@
 #include<Area.h>
 #include<Target.h>
 
-Q_DECLARE_METATYPE(QVector<Target>);
+Q_DECLARE_METATYPE(QVector<SCTarget>);
 
 class DataTest: public QThread
 {
@@ -13,17 +13,17 @@ class DataTest: public QThread
 signals:
     void sendData(int data);
     void sendData(Area data);
-    void sendData(Target data);
-    void sendData(Target* data);
-    void sendData(QVector<Target> data1, QVector<Target> data2);
+    void sendData(SCTarget data);
+    void sendData(SCTarget* data);
+    void sendData(QVector<SCTarget> data1, QVector<SCTarget> data2);
 public:
     int currentNum;
-    Target *target;
+    SCTarget *target;
     Area *area;
 
-    QVector<Target> infraredTargetList;
-    QVector<Target> radarTargetList;
-    QVector<Target> linkedTargetList;
+    QVector<SCTarget> infraredTargetList;
+    QVector<SCTarget> radarTargetList;
+    QVector<SCTarget> linkedTargetList;
     QVector<Area> alertAreaList;
     QVector<Area> ignoreAreaList;
     void sendSignal();
@@ -33,9 +33,9 @@ public:
 private:
     QTimer *timer;
     void observer();
-    Target updateTarget(QVector<Target> list, Target targetInfo);
-    Target createTarget(Target targetInfo);
-    bool static LessLineNo(const Target &t1, const Target &t2);
+    SCTarget updateTarget(QVector<SCTarget> list, SCTarget targetInfo);
+    SCTarget createTarget(SCTarget targetInfo);
+    bool static LessLineNo(const SCTarget &t1, const SCTarget &t2);
 private slots:
     void clearTimeoutTargets();
     void changeCheckState(int index, bool checked);

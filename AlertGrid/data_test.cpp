@@ -6,20 +6,20 @@
 
 DataTest::DataTest()
 {
-    qRegisterMetaType<QVector<Target>>("QVector<Target>");
+    qRegisterMetaType<QVector<SCTarget>>("QVector<Target>");
     currentNum = 0;
     area = new Area();
     area->endPitch = 0;
     area->startPitch = 0;
     area->startDirection = 0;
     area->endDirection = 0;
-    target = new Target();
+    target = new SCTarget();
     target->direction = 20;
     target->pitch = 10;
     target->lineNo = 0;
     for (int i = 2; i < 6; ++i)
     {
-        Target *infraredTarget = new Target();
+        SCTarget *infraredTarget = new SCTarget();
         infraredTarget->direction = 20;
         infraredTarget->pitch = 10;
         infraredTarget->lineNo = i;
@@ -28,7 +28,7 @@ DataTest::DataTest()
 
     for (int i = 2; i < 6; ++i)
     {
-        Target *radarTarget = new Target();
+        SCTarget *radarTarget = new SCTarget();
         radarTarget->direction = 20;
         radarTarget->pitch = 10;
         radarTarget->lineNo = i;
@@ -162,9 +162,9 @@ void DataTest::observer()
 //    resetTimer();
 }
 
-Target DataTest::updateTarget(QVector<Target> list, Target targetInfo)
+SCTarget DataTest::updateTarget(QVector<SCTarget> list, SCTarget targetInfo)
 {
-    QVector<Target> resList;
+    QVector<SCTarget> resList;
     for (int i = 0; i < list.size(); ++i)
     {
         if (list[i].batchNo == targetInfo.batchNo)
@@ -172,7 +172,7 @@ Target DataTest::updateTarget(QVector<Target> list, Target targetInfo)
             resList.push_back(list[i]);
         }
     }
-    Target target;
+    SCTarget target;
 
     if (resList.size() == 0)
     {
@@ -201,10 +201,10 @@ Target DataTest::updateTarget(QVector<Target> list, Target targetInfo)
     return target;
 }
 
-Target DataTest::createTarget(Target targetInfo)
+SCTarget DataTest::createTarget(SCTarget targetInfo)
 {
 
-    Target target;
+    SCTarget target;
     target.direction = targetInfo.direction/100.0;
     target.trueDirection = targetInfo.trueDirection/100.0;
     target.pitch = targetInfo.pitch/100.0;
@@ -248,7 +248,7 @@ void DataTest::changeCheckState(int index, bool checked)
     }
 }
 
-bool DataTest::LessLineNo(const Target &t1, const Target &t2)
+bool DataTest::LessLineNo(const SCTarget &t1, const SCTarget &t2)
 {
     return t1.lineNo < t2.lineNo;
 }

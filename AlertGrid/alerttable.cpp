@@ -369,7 +369,7 @@ void AlertTable::onInit()
     // uploadPolicyHandler
     initialLineList();
     for (int i = 0; i < LIST_SIZE; ++i) {
-        radarTargetList.push_back(*new Target());
+        radarTargetList.push_back(*new SCTarget());
         radarTargetList[i].lineNo = -1;
     }
 //    upLoadFlag = UPLOAD_POLICY == "auto"?false:true;
@@ -379,7 +379,7 @@ void AlertTable::initialLineList()
 {
     if (lineList.size() == 0)
         for (int i = 0; i < LIST_SIZE; ++i) {
-            lineList.push_back(*new Target());
+            lineList.push_back(*new SCTarget());
             lineList[i].lineNo = -1;
         }
     else
@@ -409,7 +409,7 @@ void AlertTable::radarDataHandler()
     if (count < LIST_SIZE)
     {
         for (int i = 0; i < LIST_SIZE - count; ++i) {
-            radarResList.push_back(*new Target());
+            radarResList.push_back(*new SCTarget());
         }
         isNeedBlank = true;
     }
@@ -618,7 +618,7 @@ void AlertTable::receiveTestData(Area area)
     ui->lineEdit_8->setText(QString::number(area.endPitch));
 }
 
-void AlertTable::receiveTestData(QVector<Target> infraredList, QVector<Target> radarList)
+void AlertTable::receiveTestData(QVector<SCTarget> infraredList, QVector<SCTarget> radarList)
 {
     dataHandler();
     radarDataHandler();
@@ -707,7 +707,7 @@ void AlertTable::showATarget(int row)
     }
 }
 
-void AlertTable::receiveTestData(Target target)
+void AlertTable::receiveTestData(SCTarget target)
 {
     QModelIndex index = infraredTargetModel->index(target.lineNo,BATCHNO_COL,QModelIndex());
     infraredTargetModel->setData(index,target.batchNo);
